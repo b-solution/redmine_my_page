@@ -1,0 +1,47 @@
+<div id="my_page_custom_query_issues">
+  <% global_query =  Setting.plugin_redmine_my_page["query_ids"] %>
+  <% dashboard = nil if params[:controller] != 'dashboards'
+     my_cust_query = dashboard.nil? ? user.pref.my_cust_query : dashboard.my_cust_query
+
+     if !my_cust_query.nil? %>
+      <% if dashboard.nil? || dashboard.manage_layout?(user, "dashboards") %>
+          <div class="contextual">
+            <% if !my_cust_query[:query_ids].nil? && my_cust_query[:query_ids].empty? && controller.action_name == 'page' && global_query.blank? %>
+                <%= link_to l(:label_select_query),
+                            mycustomqueryform_path(:type => 'my_cust_query', :object => dashboard ? 'dashboard' : 'user',
+                                                   :dashboard_id => dashboard ? dashboard.id : 0), :remote => true, :class => 'icon icon-add' %>
+            <% elsif !my_cust_query[:query_ids].nil? && my_cust_query[:query_ids].any? && controller.action_name != 'page_layout'  %>
+                <%= link_to l(:label_update_query),
+                            mycustomqueryform_path(:type => 'my_cust_query', :object => dashboard ? 'dashboard' : 'user',
+                                                   :dashboard_id => dashboard ? dashboard.id : 0), :remote => true,
+                            :id => 'update_link_my_cust_query', :class => 'icon icon-edit' %>
+
+            <% elsif global_query.present? %>
+                <%= link_to l(:label_update_query),
+
+                            mycustomqueryform_path(:type => 'my_cust_query', :object => dashboard ? 'dashboard' : 'user',
+                                                   :dashboard_id => dashboard ? dashboard.id : 0), :remote => true,
+                            :id => 'update_link_my_cust_query', :class => 'icon icon-edit' %>
+            <% end %>
+          </div>
+      <% end %>
+      <% if (!my_cust_query[:query_ids].nil? && my_cust_query[:query_ids].empty?) || controller.action_name == 'page_layout' %>
+          <h3><%= l(:label_my_custom_queries) %></h3>
+      <% end %>
+  <% end %>
+
+  <% if controller.action_name != 'page_layout' %>
+      <div id='myqueryedit' style='display:none;'></div>
+      <div id='mycustomquery'>
+        <% if (!my_cust_query.nil? && !my_cust_query[:query_ids].nil? && my_cust_query[:query_ids].any?) || global_query.present? %>
+            <% block ||= 'custom_query_issues_list'  %>
+            <% settings ||= user.pref.my_page_settings(block).presence || {:columns=>["project", "tracker", "status", "priority", "subject", "assigned_to", "start_date", "due_date"]} %>
+            <% (my_cust_query[:query_ids].presence || global_query.presence || []).each do |queryid| %>
+                <%= render :partial => "my/my_queries_issue_list", :locals => { :query_id => queryid,
+                                                                                :query_limit => (my_cust_query[:limit] || 10), :user => user, :settings => settings, :block => block } %>
+                <hr>
+            <% end -%>
+        <% end -%>
+      </div>
+  <% end -%>
+</div>

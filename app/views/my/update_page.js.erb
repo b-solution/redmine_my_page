@@ -1,0 +1,3 @@
+<% @updated_blocks.each do |block| %>
+  $("#my_page_custom_query_issues").replaceWith("<%= escape_javascript(render :partial => "my/blocks/#{block}", :locals => { :user => @user }) %>");
+<% end %>
