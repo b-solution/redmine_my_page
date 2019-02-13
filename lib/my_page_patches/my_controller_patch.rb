@@ -5,16 +5,12 @@ module MyPagePatches
       base.class_eval do
         helper :queries
         helper :sort
+
+        alias_method_chain :page, :custom_query_issues_list
       end
     end
 
     module InstanceMethods
-      DEFAULT_LAYOUT = { 'top'=>['custom_query_issues_list'],
-                         'left' => ['issuesassignedtome'],
-                         'right' => ['issuesreportedbyme']
-      }.freeze
-
-
       if Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR == 3
         def update_page
           @user = User.current
@@ -27,6 +23,13 @@ module MyPagePatches
           @updated_blocks = block_settings.keys
         end
 
+        def page_with_custom_query_issues_list
+          @user = User.current
+          @blocks = @user.pref[:my_page_layout] || { 'top'=>['custom_query_issues_list'],
+                                                     'left' => ['issuesassignedtome'],
+                                                     'right' => ['issuesreportedbyme']
+          }.freeze
+        end
       end
 
       def my_custom_form
