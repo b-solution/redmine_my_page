@@ -1,6 +1,4 @@
-<%
-  if !query.nil? && query.issues.any?
-    query.column_names = settings[:columns] if settings && settings[:columns]
+<%  query.column_names = settings[:columns] if settings && settings[:columns]
     query_issues_count = query.issue_count
     if query_limit.to_i > 0
       query_issues = query.issues(:limit => query_limit.to_i)
@@ -14,7 +12,7 @@
       (<%= query_issues_count %>)
     </h3>
 
-    <%= render :partial => 'issues/list',
+    <%= render :partial => 'issues/query_list',
                :locals => {
                    :issues => query_issues,
                    :query => query,
@@ -29,7 +27,4 @@
      <%= auto_discovery_link_tag(:atom,
           _project_issues_path(query.project, query.as_params.merge(:format => 'atom', :key => User.current.rss_key)),
           {:title => query.name}) %>
-  <% end %>
-  <% else %>
-    <p class="nodata"><%= l(:label_no_data) %></p>
-  <% end %>
+<% end %>
