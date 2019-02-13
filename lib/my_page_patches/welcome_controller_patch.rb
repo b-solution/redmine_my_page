@@ -11,11 +11,9 @@ module MyPagePatches
 
     module InstanceMethods
       def landing_page_index
-        if User.current.logged? && ((Setting.plugin_redmine_my_page["homelink_override"] == "1" &&
-            User.current.pref.landing_page.present?) || params['force_redirect'] == '1')
+        if User.current.logged? && ((Setting.plugin_redmine_my_page["homelink_override"] == "1") || params['force_redirect'] == '1')
 
-          ret_url = MypageHelper::user_pref_url(self, User.current.pref)
-          redirect_to ret_url if ret_url.present?
+          redirect_to my_page_url
         end
       end
     end
