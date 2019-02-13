@@ -25,10 +25,14 @@ module MyPagePatches
 
         def page_with_custom_query_issues_list
           @user = User.current
-          @blocks = @user.pref[:my_page_layout] || { 'top'=>['custom_query_issues_list'],
-                                                     'left' => ['issuesassignedtome'],
-                                                     'right' => ['issuesreportedbyme']
-          }.freeze
+          default =  if User.current.admin?
+            { 'top'=>['open_issues', 'all_issues']    }
+          else
+            { 'top'=>['my_open_issues', 'all_my_issues']
+            }
+
+          end
+          @blocks = @user.pref[:my_page_layout] || default
         end
       end
 

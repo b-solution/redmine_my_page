@@ -1,0 +1,20 @@
+<% if controller.action_name != 'page_layout' %>
+    <div id='myqueryedit' style='display:none;'></div>
+    <div id='mycustomquery'>
+          <% settings = {:columns=>["project", "tracker", "status", "priority", "subject", "assigned_to", "start_date", "due_date"]} %>
+      <% query = IssueQuery.new(
+                                    :name=>"ALL ISSUES",
+                                    :filters=>{"status_id"=>{:operator=>"*", :values=>[""]}},
+                                    :column_names=>nil,
+                                    :sort_criteria=>[],
+                                    :group_by=>"",
+                                    :visibility=>2,
+                                    :options=>{:totalable_names=>[], :draw_relations=>nil, :draw_progress_line=>nil}
+      )  %>
+              <%= render :partial => "my/my_queries_issue_list", :locals => { :query => query,
+                                                                              :query_limit => (15), :user => user, :settings => settings, :block => 'all_issues_query' } %>
+              <hr>
+    </div>
+<% else %>
+    <h3>ALL ISSUES</h3>
+<% end -%>
