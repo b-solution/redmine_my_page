@@ -4,7 +4,7 @@
       <% settings = {:columns=>["project", "tracker", "status", "priority", "subject", "assigned_to", "start_date", "due_date"]} %>
       <% query = IssueQuery.new(
           :name=>"ISSUES STILL OPEN",
-          :filters=>{"status_id"=>{:operator=>"o", :values=> IssueStatus.where(name: ['New', 'In Progress']).map(&:id).map(&:to_s)},
+          :filters=>{"status_id"=>{:operator=>"=", :values=> IssueStatus.where(name: ['New', 'In Progress']).map(&:id).map(&:to_s).presence || ['']} ,
                      "assigned_to_id"=>{:operator=>"=", :values=>["me"]}},
           :column_names=>nil,
           :sort_criteria=>[],
