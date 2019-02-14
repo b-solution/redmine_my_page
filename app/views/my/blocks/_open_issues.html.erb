@@ -4,14 +4,15 @@
       <% settings = {:columns=>["project", "tracker", "status", "priority", "subject", "assigned_to", "start_date", "due_date"]} %>
       <% query = IssueQuery.new(
           :name=>"ISSUES STILL OPEN",
-          :filters=>{"status_id"=>{:operator=>"=", :values=> IssueStatus.where(name: ['New', 'In Progress']).map(&:id).map(&:to_s)} },
+          :filters=>{"status_id"=>{:operator=>"=", :values=> IssueStatus.where(name: ['New', 'In Progress']).map(&:id).map(&:to_s).presence || ['']} },
           :column_names=>nil,
-          :sort_criteria=>[],
+          :sort_criteria=> Array.wrap(params[:sort].to_s.split(',').map{|s| s.split(':') }),
           :group_by=>"",
-          :visibility=>2,
-          :options=>{:totalable_names=>[], :draw_relations=>nil, :draw_progress_line=>nil}
+          user_id: 0,
+          :visibility=>0,
+          :options=>{:totalable_names=> nil, :draw_relations=>nil, :draw_progress_line=>nil}
       )  %>
-      <%= render :partial => "my/my_queries_issue_list", :locals => { :query => query,
+         <%= render :partial => "my/my_queries_issue_list", :locals => { :query => query,
                                                                       :query_limit => (15),
                                                                       :user => user,
                                                                       :settings => settings, :block => 'open_issue_query' } %>
